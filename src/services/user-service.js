@@ -60,11 +60,28 @@ class UserService{
                 console.log("Password doesn't match");
                 throw{error:"Incorrect Password"};
             }
-            //step 3-> If passwords match then create new Token and send it to the user
+            //step 3-> If passwords match then create new Token (with only email and id not password) and send it to the user
             const newJWT=this.createToken({email:user.email, id:user.id});
             return newJWT;
         } catch (error) {
-            console.log(`Something went wrong in sign-in process`);  
+            console.log(`Something went wrong in sign-in process`, error);  
+            throw error;
+        }
+    }
+
+    async isAuthenticated(token){
+        try {
+            const response=this.verifyToken(token); //return {email: , id: , iat: , exp:} 
+            if(!response){ 
+                throw {error:"Invalid Token"};
+            }
+            const user=await this.userRepository.getById(response.id);
+            if(!user){ //just incase user got token after signup but later he deleted his id but still has token as it has not expired
+                throw {error:"User with given token does not exist"}
+            }
+            return user.id;
+        } catch (error) {
+            console.log(`Something went wrong in auth process`);  
             throw error;
         }
     }
