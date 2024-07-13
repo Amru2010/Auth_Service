@@ -8,6 +8,7 @@ class UserService{
     constructor(){
         this.userRepository=new UserRepository();
     }
+
     async create(data){
         try {
              const user= await this.userRepository.create(data);
@@ -44,6 +45,27 @@ class UserService{
         } catch (error) {
             console.log(`Something went wrong in Password Verification`,error);  
             throw {error};
+        }
+    }
+
+    async signIn(email, plainPassword){
+        try {
+            //step 1-> check for user through email
+            const user=await this.userRepository.getUserByEmail(email);
+            console.log(user);
+            //step 2-> validate the password
+            const passwordMatch=this.checkPassword(plainPassword,user.password);
+
+            if(!passwordMatch){
+                console.log("Password doesn't match");
+                throw{error:"Incorrect Password"};
+            }
+            //step 3-> If passwords match then create new Token and send it to the user
+            const newJWT=this.createToken({email:user.email, id:user.id});
+            return newJWT;
+        } catch (error) {
+            console.log(`Something went wrong in sign-in process`);  
+            throw error;
         }
     }
 

@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull:false,
       validate:{
-        len:[8,100],
+        len:[5,100],
       }
     },
   }, {
@@ -43,6 +43,5 @@ module.exports = (sequelize, DataTypes) => {
     const encryptedPassword = bcrypt.hashSync(user.password,SALT);
     user.password=encryptedPassword;
   }); 
-
   return User;
 };

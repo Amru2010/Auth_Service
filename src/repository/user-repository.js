@@ -1,6 +1,7 @@
 const {User}=require("../models/index");
 
 class UserRepository{
+
     async create(data){
         try {
             const user=await User.create(data);
@@ -10,6 +11,7 @@ class UserRepository{
             throw{error};
         }    
     }
+
     async destroy(userId){
         try {
             await User.destroy({
@@ -42,6 +44,21 @@ class UserRepository{
             throw{error};
         }
     }
+
+    async getUserByEmail(userEmail){
+        try {
+            const user=await User.findOne({
+                where:{
+                    email:userEmail,
+                }
+            });
+            return user;
+        } catch (error) {
+            console.log(`Something went wrong in User Repository Layer`);
+            throw {error};
+        }
+    }
+
     async getAll(){
         try {
             
