@@ -1,5 +1,6 @@
 const {UserRepository}=require("../repository/index");
 const jwt=require('jsonwebtoken');
+const {sendVerificationEmail}=require('../utils/helper');
 const bcrypt=require('bcrypt');
 
 const {JWT_KEY}= require('../config/serverConfig') 
@@ -11,11 +12,32 @@ class UserService{
 
     async create(data){
         try {
-             const user= await this.userRepository.create(data);
-             return user;
+            const user= await this.userRepository.create(data);
+            const verificationToken = jwt.sign({ email: user.email }, JWT_KEY, { expiresIn: '1h' });
+            await sendVerificationEmail(user, verificationToken);
+            return user;
         } catch (error) {
             console.log(`Something went wrong in User service layer`);  
             throw {error};
+        }
+    }
+
+    async verifyEmail(token) {
+        try {
+            const decoded = jwt.verify(token, JWT_KEY);
+            const user = await this.userRepository.getUserByEmail(decoded.email);
+
+            if (!user) {
+                throw { error: 'User not found' };
+            }
+            if (user.isVerified) {
+                throw { error: 'User is already verified' };
+            }
+            await this.userRepository.updateUserVerified(user.id);
+            return user;
+        } catch (error) {
+            console.log(`Something went wrong in email verification`, error);
+            throw { error };
         }
     }
 

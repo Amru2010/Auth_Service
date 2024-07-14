@@ -24,6 +24,25 @@ const create=async (req,res)=>{
     }
 }
 
+const verifyEmail=async (req,res)=>{
+     try {
+        const token = req.query.token;
+        await userService.verifyEmail(token);
+        return res.status(200).json({
+            success:true,
+            message:"User email verified successfully",
+            error:{}
+        });
+    } catch (error) {
+        return res.status(400).json({
+            data:{},
+            success:false,
+            message:"Failed to verify email",
+            error:error
+        });
+    }
+}
+
 const signIn = async (req,res)=>{
     try {
         const response = await userService.signIn(req.body.email, req.body.password);
@@ -69,4 +88,5 @@ module.exports={
     create,
     signIn,
     isAuthenticated,
+    verifyEmail,
 }

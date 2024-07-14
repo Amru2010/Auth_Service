@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
         len:[5,100],
       }
     },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   }, {
     sequelize,
     modelName: 'User',

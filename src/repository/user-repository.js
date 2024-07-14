@@ -25,9 +25,12 @@ class UserRepository{
             throw{error};
         }    
     }
-    async update(){
+    async updateUserVerified(userId){
         try {
-            
+            const user=await User.findByPk(userId);
+            user.isVerified=true;
+            await user.save();
+            return user;
         } catch (error) {
             console.log(`Something went wrong in User Repository Layer`);
             throw{error};
