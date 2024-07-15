@@ -84,9 +84,30 @@ const isAuthenticated=async (req,res)=>{
     }
 }
 
+const isAdmin=async (req,res)=>{
+    try {
+        const response=await userService.isAdmin(req.body.id);
+        return res.status(200).json({
+            data:response,
+            success:true,
+            message:"Successfully fetched Admin perms",
+            error:{},
+        });
+    } catch (error) {
+        console.log(`Something went wrong at User controller layer`);
+        return res.status(500).json({
+            data:{},
+            success:false,
+            message:"Something went wrong",
+            error:error
+        });
+    }
+}
+
 module.exports={
     create,
     signIn,
     isAuthenticated,
     verifyEmail,
+    isAdmin,
 }
