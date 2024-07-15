@@ -14,12 +14,12 @@ const create=async (req,res)=>{
             error:{}
         });
     } catch (error) {
-        console.log(`Something went wrong at User controller layer ${error}`);
-        return res.status(500).json({
+        console.log(`Something went wrong at User controller layer`,error);
+        return res.status(error.statusCode || 500).json({
             data:{},
             success:false,
-            message:"Failed to create user",
-            error:error
+            message:error.message || "Something went wrong",
+            error:error.explanation || error
         });
     }
 }

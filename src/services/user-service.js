@@ -3,7 +3,7 @@ const jwt=require('jsonwebtoken');
 const {sendVerificationEmail}=require('../utils/helper');
 const bcrypt=require('bcrypt');
 
-const {JWT_KEY}= require('../config/serverConfig') 
+const {JWT_KEY}= require('../config/serverConfig'); 
 
 class UserService{
     constructor(){
@@ -17,8 +17,11 @@ class UserService{
             await sendVerificationEmail(user, verificationToken);
             return user;
         } catch (error) {
+            // if(error.name=="SequelizeValidationError"){
+            //     throw {error}
+            // }
             console.log(`Something went wrong in User service layer`);  
-            throw {error};
+            throw error;
         }
     }
 
